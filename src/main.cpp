@@ -162,8 +162,6 @@ int main(int argc, char** argv) {
     shader->setMat4("projection", projection);
     shader->setMat4("view", view);
 
-    fmt::print("{}\n", camera->getZoom());
-
     for (int i = 0; i < 10; i++) {
       glm::mat4 model = glm::mat4(1.0f);
       model = glm::translate(model, cube_positions[i]);
