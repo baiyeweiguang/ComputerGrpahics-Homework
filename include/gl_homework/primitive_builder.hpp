@@ -21,14 +21,6 @@
 
 namespace gl_hwk {
 
-struct Primitive {
-  GLuint vao;
-  GLuint vbo;
-  std::optional<GLuint> ebo;
-  GLenum type;
-  GLsizei size;
-};
-
 class PrimitiveBuilderImpl;
 class PrimitiveBuilder {
  public:
@@ -38,86 +30,64 @@ class PrimitiveBuilder {
 
   auto buildPoints(const std::string& name,
                    const std::vector<glm::vec3>& positions,
-                   const glm::vec3& color,
-                   const glm::mat4& model = glm::mat4(1.0f)) -> void;
-
-  auto buildPoints(const std::string& name,
-                   const std::vector<glm::vec3>& positions,
-                   const std::vector<glm::vec3>& colors,
+                   const std::vector<std::vector<float>>& other_data,
                    const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildPoint(const std::string& name, const glm::vec3& position,
-                  const glm::vec3& color,
-                  const glm::mat4& model = glm::mat4(1.0f)) -> void;
-
-  auto buildLines(const std::string& name,
-                  const std::vector<glm::vec3>& positions,
-                  const std::vector<GLsizei>& indices, const glm::vec3& color,
+                  const std::vector<float>& other_data,
                   const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildLines(const std::string& name,
                   const std::vector<glm::vec3>& positions,
                   const std::vector<GLsizei>& indices,
-                  const std::vector<glm::vec3>& colors,
+                  const std::vector<std::vector<float>>& other_data,
                   const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildLine(const std::string& name, const glm::vec3& start,
-                 const glm::vec3& end, const glm::vec3& color,
+                 const glm::vec3& end, const std::vector<float>& other_data,
                  const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildLineStrip(const std::string& name,
                       const std::vector<glm::vec3>& positions,
-                      const std::vector<glm::vec3>& colors,
+                      const std::vector<std::vector<float>>& other_data,
                       const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildLineStrip(const std::string& name,
                       const std::vector<glm::vec3>& positions,
                       const std::vector<GLsizei>& indices,
-                      const std::vector<glm::vec3>& colors,
+                      const std::vector<std::vector<float>>& other_data,
                       const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildLineLoop(const std::string& name,
                      const std::vector<glm::vec3>& positions,
-                     const std::vector<glm::vec3>& colors,
+                     const std::vector<std::vector<float>>& other_data,
                      const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildLineLoop(const std::string& name,
                      const std::vector<glm::vec3>& positions,
                      const std::vector<GLsizei>& indices,
-                     const std::vector<glm::vec3>& colors,
+                     const std::vector<std::vector<float>>& other_data,
                      const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildTriangles(const std::string& name,
                       const std::vector<glm::vec3>& positions,
                       const std::vector<GLsizei>& indices,
-                      const glm::vec3& color,
-                      const glm::mat4& model = glm::mat4(1.0f)) -> void;
-
-  auto buildTriangles(const std::string& name,
-                      const std::vector<glm::vec3>& positions,
-                      const std::vector<GLsizei>& indices,
-                      const std::vector<glm::vec3>& colors,
+                      const std::vector<std::vector<float>>& other_data,
                       const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildTriangle(const std::string& name, const glm::vec3& p1,
                      const glm::vec3& p2, const glm::vec3& p3,
-                     const glm::vec3& color) -> void;
+                     const std::vector<float>& other_data) -> void;
 
   auto buildTriangleStrip(const std::string& name,
                           const std::vector<glm::vec3>& positions,
                           const std::vector<GLsizei>& indices,
-                          const glm::vec3& color,
+                          const std::vector<std::vector<float>>& other_data,
                           const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
   auto buildTriangleStrip(const std::string& name,
                           const std::vector<glm::vec3>& positions,
-                          const std::vector<GLsizei>& indices,
-                          const std::vector<glm::vec3>& colors,
-                          const glm::mat4& model = glm::mat4(1.0f)) -> void;
-
-  auto buildTriangleStrip(const std::string& name,
-                          const std::vector<glm::vec3>& positions,
-                          const std::vector<glm::vec3>& colors,
+                          const std::vector<std::vector<float>>& other_data,
                           const glm::mat4& model = glm::mat4(1.0f)) -> void;
 
  private:

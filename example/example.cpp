@@ -30,17 +30,29 @@ int main(int argc, char** argv) {
   gl_hwk::OpenGLApplication::instance().init(argc, argv, options);
 
   // 着色器
-  auto shader = std::make_shared<gl_hwk::Shader>(
+  auto objects_shader = std::make_shared<gl_hwk::Shader>(
       "shader/"
-      "texture.vert.GLSL",
+      "phong.vert.GLSL",
       "shader/"
-      "texture.frag.GLSL");
+      "phong.frag.GLSL");
+
+  auto light_source_shader = std::make_shared<gl_hwk::Shader>(
+      "shader/"
+      "light_source.vert.GLSL",
+      "shader/"
+      "light_source.frag.GLSL");
+
+  auto object_builder =
+      std::make_shared<gl_hwk::PrimitiveBuilder>(objects_shader);
+
+  auto light_source_builder =
+      std::make_shared<gl_hwk::PrimitiveBuilder>(light_source_shader);
 
   // 纹理
   GLuint texture =
       gl_hwk::TextureLoader::instance().loadTexture("texture/wall.jpg");
-  shader->start();
-  shader->setInt("texture1", 0);
+  objects_shader->start();
+  objects_shader->setInt("texture1", 0);
 
   // 顶点数据
   // clang-format off
@@ -89,7 +101,8 @@ int main(int argc, char** argv) {
         {-0.5f,  0.5f, -0.5f},
   };
 
-  auto color = std::vector<glm::vec3>{     
+  // 会以三个为一组作为顶点着色器的输入，如果不为3的整数倍，多出来的1/2个数据会被抛弃
+  auto texture_coord= std::vector<std::vector<float>>{     
     { 0.0f, 0.0f, 0.0f}, // 左下
     { 1.0f, 0.0f, 0.0f}, // 右下
     { 1.0f, 1.0f, 0.0f}, // 右上
@@ -132,6 +145,53 @@ int main(int argc, char** argv) {
     { 0.0f, 0.0f, 0.0f},
     { 0.0f, 1.0f, 0.0f}};
 
+    auto normals = std::vector<std::vector<float>>{
+        { 0.0f,  0.0f, -1.0f},
+        { 0.0f,  0.0f, -1.0f},
+        { 0.0f,  0.0f, -1.0f},
+        { 0.0f,  0.0f, -1.0f},
+        { 0.0f,  0.0f, -1.0f},
+        { 0.0f,  0.0f, -1.0f},
+        { 0.0f,  0.0f,  1.0f},
+        { 0.0f,  0.0f,  1.0f},
+        { 0.0f,  0.0f,  1.0f},
+        { 0.0f,  0.0f,  1.0f},
+        { 0.0f,  0.0f,  1.0f},
+        { 0.0f,  0.0f,  1.0f},
+        {-1.0f,  0.0f,  0.0f},
+        {-1.0f,  0.0f,  0.0f},
+        {-1.0f,  0.0f,  0.0f},
+        {-1.0f,  0.0f,  0.0f},
+        {-1.0f,  0.0f,  0.0f},
+        {-1.0f,  0.0f,  0.0f},
+        { 1.0f,  0.0f,  0.0f},
+        { 1.0f,  0.0f,  0.0f},
+        { 1.0f,  0.0f,  0.0f},
+        { 1.0f,  0.0f,  0.0f},
+        { 1.0f,  0.0f,  0.0f},
+        { 1.0f,  0.0f,  0.0f},
+        { 0.0f, -1.0f,  0.0f},
+        { 0.0f, -1.0f,  0.0f},
+        { 0.0f, -1.0f,  0.0f},
+        { 0.0f, -1.0f,  0.0f},
+        { 0.0f, -1.0f,  0.0f},
+        { 0.0f, -1.0f,  0.0f},
+        { 0.0f,  1.0f,  0.0f},
+        { 0.0f,  1.0f,  0.0f},
+        { 0.0f,  1.0f,  0.0f},
+        { 0.0f,  1.0f,  0.0f},
+        { 0.0f,  1.0f,  0.0f},
+        { 0.0f,  1.0f,  0.0f}};
+
+    std::vector<std::vector<float>> other_data;
+    for (int i = 0; i < vertices.size(); i++) {
+      std::vector<float> temp;
+      std::copy(texture_coord[i].begin(), texture_coord[i].end(),
+                std::back_inserter(temp));
+      std::copy(normals[i].begin(), normals[i].end(), std::back_inserter(temp));
+      other_data.push_back(std::move(temp));
+    }
+
 
   auto cube_positions = std::vector<glm::vec3>{
       glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
@@ -139,33 +199,46 @@ int main(int argc, char** argv) {
       glm::vec3(2.4f, -0.4f, -3.5f),  glm::vec3(-1.7f, 3.0f, -7.5f),
       glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
       glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
+
+  auto light_positions = glm::vec3{0, 0.0f, 4.0};
   // clang-format on
 
   // Camera
   auto camera = std::make_shared<gl_hwk::Camera>(glm::vec3(0.0f, 0.0f, -3.0f),
                                                  600.f, 1024, 1024);
 
-  // Builder
-  auto builder = std::make_shared<gl_hwk::PrimitiveBuilder>(shader);
-
   // 渲染主程序
   auto render_func = [&]() -> void {
     gl_hwk::TextureLoader::instance().activeTexture(texture, GL_TEXTURE0);
 
-    // 坐标变换
-    glm::mat4 projection = camera->getProjectionMatrix();
-    glm::mat4 view = camera->getViewMatrix();
-    shader->setMat4("projection", projection);
-    shader->setMat4("view", view);
+    // 绘制光源
+    light_source_shader->start();
+    light_source_shader->setMat4("projection", camera->getProjectionMatrix());
+    light_source_shader->setMat4("view", camera->getViewMatrix());
+    auto model = glm::mat4(1.0f);
+    model = glm::translate(model, light_positions);
+    model = glm::scale(model, glm::vec3(0.2f));  // a smaller cube
+    light_source_shader->setMat4("model", model);
+    light_source_builder->buildTriangles("light", vertices, {}, other_data,
+                                         model);
 
+    // 绘制物体
+    objects_shader->start();
+    objects_shader->setVec3("objectColor", 1.0f, 0.5f, 0.31f);
+    objects_shader->setVec3("lightColor", 1.0f, 1.0f, 1.0f);
+    objects_shader->setVec3("lightPos", light_positions);
+    objects_shader->setVec3("viewPos", camera->getPosition());
+    objects_shader->setMat4("projection", camera->getProjectionMatrix());
+    objects_shader->setMat4("view", camera->getViewMatrix());
     for (int i = 0; i < 10; i++) {
       glm::mat4 model = glm::mat4(1.0f);
       model = glm::translate(model, cube_positions[i]);
       float angle = 20.0f * i + std::abs(glutGet(GLUT_ELAPSED_TIME) / 200.0f);
+
       model =
           glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-      builder->buildTriangles(fmt::format("cube_{}", 0), vertices, {}, color,
-                              model);
+      object_builder->buildTriangles(fmt::format("cube_{}", 0), vertices, {},
+                                     other_data, model);
     }
   };
 
