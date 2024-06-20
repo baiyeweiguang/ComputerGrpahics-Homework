@@ -8,7 +8,6 @@
 #include <glm/fwd.hpp>
 #include <memory>
 #include <vector>
-#include <optional>
 // OpenGL
 #include <GL/glew.h>
 #include <GL/freeglut.h>

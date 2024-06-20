@@ -71,12 +71,13 @@ auto OpenGLApplication::init(int argc, char** argv,
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(options.width, options.height);
     impl_->window_ = glutCreateWindow(options.name.c_str());
+
     if (glewInit()) {
       fmt::print("Error: glewInit failed\n");
       std::abort();
     }
+    // 默认开启深度测试
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
   }
   fmt::print("OpenGL Application Init!\n");
   impl_->init_ = true;
@@ -92,6 +93,14 @@ auto OpenGLApplication::run() -> void {
     glutTimerFunc(33, OpenGLApplicationImpl::timerProc, 1);
     // 进入主循环
     glutMainLoop();
+  }
+}
+
+auto OpenGLApplication::setDepthTest(bool enable) -> void {
+  if (enable) {
+    glEnable(GL_DEPTH_TEST);
+  } else {
+    glDisable(GL_DEPTH_TEST);
   }
 }
 

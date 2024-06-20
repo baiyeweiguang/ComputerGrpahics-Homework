@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <unordered_map>
+#include <optional>
 
 namespace gl_hwk {
 
@@ -18,12 +19,10 @@ class PrimitiveBuilderImpl {
  public:
   explicit PrimitiveBuilderImpl(std::shared_ptr<Shader> shader)
       : shader_(shader) {
-    shader_->start();
   }
 
   auto setShader(std::shared_ptr<Shader> shader) -> void {
     shader_ = shader;
-    shader_->start();
   }
 
   auto buildPrimitvie(GLenum type, const std::string& name,
@@ -33,7 +32,7 @@ class PrimitiveBuilderImpl {
                       const glm::mat4& model) -> void {
     assert(positions.size() >= other_data.size());
     assert(!name.empty());
-
+    shader_->start();
     auto draw = [this](const Primitive& info, const glm::mat4& model) {
       shader_->setMat4("model", model);
 

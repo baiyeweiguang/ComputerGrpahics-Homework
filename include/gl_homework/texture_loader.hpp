@@ -5,7 +5,7 @@
 
 // clang-format off
 // std
-#include <filesystem>
+#include <vector>
 // OpenGL
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -22,9 +22,11 @@ class TextureLoader {
  public:
   static auto instance() -> TextureLoader&;
 
-  auto loadTexture(const std::filesystem::path& texture_path) -> GLuint;
+  auto loadTexture(const std::string& texture_path) -> GLuint;
 
-  auto activeTexture(GLuint texture_id, int GL_TEXTURE_idx) -> void;
+  auto loadBoxMap(const std::vector<std::string>& texture_paths) -> GLuint;
+
+  auto activeTexture(GLuint texture_id, int idx) -> void;
 
  private:
   TextureLoader();

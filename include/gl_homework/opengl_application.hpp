@@ -37,6 +37,8 @@ class OpenGLApplication {
             const WindowOptions& options = WindowOptions()) -> void;
   auto run() -> void;
 
+  auto setDepthTest(bool enable) -> void;
+
   auto onKeyboardPress(
       std::function<void(unsigned char key, int x, int y)>&& func) -> void;
   auto onDisplay(std::function<void()>&& func) -> void;
