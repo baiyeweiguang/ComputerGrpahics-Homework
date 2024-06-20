@@ -150,10 +150,6 @@ int main(int argc, char** argv) {
 
   // 渲染主程序
   auto render_func = [&]() -> void {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
-
     gl_hwk::TextureLoader::instance().activeTexture(texture, GL_TEXTURE0);
 
     // 坐标变换
@@ -171,7 +167,6 @@ int main(int argc, char** argv) {
       builder->buildTriangles(fmt::format("cube_{}", 0), vertices, {}, color,
                               model);
     }
-    glFlush();
   };
 
   // 键盘回调

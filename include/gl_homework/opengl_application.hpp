@@ -21,6 +21,10 @@ struct WindowOptions {
   std::string name = "window1";
   uint32_t width = 512;
   uint32_t height = 512;
+  // 背景颜色
+  float r = 0.0;
+  float b = 0.0;
+  float g = 0.0;
 };
 
 class OpenGLApplicationImpl;

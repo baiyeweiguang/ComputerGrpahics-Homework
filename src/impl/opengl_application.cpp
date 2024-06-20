@@ -16,11 +16,14 @@ class OpenGLApplicationImpl {
   }
 
   static auto display() -> void {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(options_.r, options_.g, options_.b, 1.0);
     if (render_callback_) {
       render_callback_();
     } else {
       fmt::print("render func is not available\n");
     }
+    glFlush();
   }
 
   static auto keyboardCallback(unsigned char key, int x, int y) -> void {
@@ -40,9 +43,9 @@ class OpenGLApplicationImpl {
       mouse_move_callback_(x, y);
     }
   }
-
   bool init_;
   GLuint window_;
+  static WindowOptions options_;
   static std::function<void()> render_callback_;
   static std::function<void(unsigned char key, int x, int y)>
       keyboard_callback_;
@@ -62,6 +65,7 @@ auto OpenGLApplication::instance() -> OpenGLApplication& {
 
 auto OpenGLApplication::init(int argc, char** argv,
                              const WindowOptions& options) -> void {
+  impl_->options_ = options;
   if (!impl_->init_) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
@@ -111,6 +115,7 @@ auto OpenGLApplication::onMouseMove(std::function<void(int x, int y)>&& func)
 }
 
 // 定义静态成员变量
+WindowOptions OpenGLApplicationImpl::options_;
 std::function<void()> OpenGLApplicationImpl::render_callback_;
 std::function<void(unsigned char key, int x, int y)>
     OpenGLApplicationImpl::keyboard_callback_;
