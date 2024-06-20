@@ -49,11 +49,15 @@ class PrimitiveBuilder {
                       const std::vector<GLsizei>& indices,
                       const std::vector<glm::vec3>& colors,
                       const glm::mat4& model = glm::mat4(1.0f)) {
-    assert(poses.size() == colors.size());
+    assert(poses.size() >= colors.size());
     assert(!name.empty());
 
     auto draw = [this](const Primitive& info, const glm::mat4& model) {
+      // 设置模型系到世界系的变换
+      shader_->setMat4("model", model);
+
       glBindVertexArray(info.vao);
+      glBindBuffer(GL_ARRAY_BUFFER, info.vbo);
       glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                             (void*)0);
       glEnableVertexAttribArray(0);
@@ -68,8 +72,6 @@ class PrimitiveBuilder {
       } else {
         glDrawArrays(info.type, 0, info.size);
       }
-      // 设置模型系到世界系的变换
-      shader_->setMat4("model", model);
     };
 
     if (infos_.find(name) != infos_.end()) {
@@ -98,9 +100,6 @@ class PrimitiveBuilder {
 
       glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * vertices_data.size(),
                    vertices_data.data(), GL_STATIC_DRAW);
-      glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2,
-                            reinterpret_cast<void*>(0));
-      glEnableVertexAttribArray(0);
 
       // 设置ebo
       if (!indices.empty()) {
@@ -110,6 +109,7 @@ class PrimitiveBuilder {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(GLsizei) * indices.size(),
                      indices.data(), GL_STATIC_DRAW);
         infos_[name].size = indices.size();
+        infos_[name].ebo = ebo;
       }
 
       // 绘制

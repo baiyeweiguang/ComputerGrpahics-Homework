@@ -1,7 +1,7 @@
 // Copyright 2024 Chengfu Zou
 
-#ifndef GL_HOMEWORK_CAMERA_HPP_
-#define GL_HOMEWORK_CAMERA_HPP_
+#ifndef GL_HOMEWORK_TEXTURE_LOADER_HPP_
+#define GL_HOMEWORK_TEXTURE_LOADER_HPP_
 
 // clang-format off
 // std
@@ -13,13 +13,17 @@
 // third party
 #include <fmt/core.h>
 #include <opencv2/opencv.hpp>
-#include "opencv2/imgcodecs.hpp"
 // clang-format on
 
 namespace gl_hwk {
+
+// Singleton
 class TextureLoader {
  public:
-  TextureLoader() = default;
+  static auto instance() -> TextureLoader& {
+    static TextureLoader instance;
+    return instance;
+  }
 
   auto loadTexture(const std::filesystem::path& texture_path) -> GLuint {
     if (!std::filesystem::exists(texture_path)) {
@@ -46,8 +50,8 @@ class TextureLoader {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0, GL_BGR_EXT,
-                 GL_UNSIGNED_BYTE, image.data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.cols, image.rows, 0,
+                 GL_BGR_EXT, GL_UNSIGNED_BYTE, image.data);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     textures_[texture_id] = image;
@@ -55,12 +59,20 @@ class TextureLoader {
     return texture_id;
   }
 
-  static auto activeTexture(GLuint texture_id, int GL_TEXTURE_idx) -> void {
+  auto activeTexture(GLuint texture_id, int GL_TEXTURE_idx) -> void {
     glActiveTexture(GL_TEXTURE_idx);
     glBindTexture(GL_TEXTURE_2D, texture_id);
   }
 
  private:
+  TextureLoader() = default;
+  ~TextureLoader() = default;
+  // disable copy and move
+  TextureLoader(const TextureLoader&) = delete;
+  TextureLoader& operator=(const TextureLoader&) = delete;
+  TextureLoader(TextureLoader&&) = delete;
+  TextureLoader& operator=(TextureLoader&&) = delete;
+
   std::unordered_map<GLuint, cv::Mat> textures_;
 };
 
