@@ -16,18 +16,23 @@ target("gl_homework")
     add_files("src/impl/*.cpp")
     add_includedirs("include")
     add_packages("glew", "freeglut", "glm", "fmt", "opencv")
+    set_installdir("install")
+    after_install(function (target)
+        -- copy include
+        os.cp("include/", target:installdir())
+    end)
 
-target("main")
+
+target("example")
     set_kind("binary")
-    add_files("src/main.cpp")
-    add_includedirs("include")
+    add_files("example/example.cpp")
     add_deps("gl_homework")
-    add_packages("freeglut", "glew", "fmt", "opencv")
-
-after_build(function (target)
-    os.cp("shader/", target:targetdir())
-    os.cp("texture/", target:targetdir())
-end)
+    add_includedirs("install/include")
+    add_packages("freeglut", "glew", "fmt")
+    after_build(function (target)
+        os.cp("shader/", target:targetdir())
+        os.cp("texture/", target:targetdir())
+    end)
 
 
 

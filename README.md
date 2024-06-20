@@ -12,7 +12,7 @@ gl_homework库对OpenGL（基于glut和glew）进行二次封装，实现了一�
 
 - **Shader** ： 快速加载顶点/片段着色器代码并进行编译
 
-- **PrimitiveBuilder** ： 构造器模式，通过*buildTriangles*、*buildLines*等函数绘制基础图元
+- **PrimitiveBuilder** ： 建造者模式，通过*buildTriangles*、*buildLines*等函数绘制基础图元
 
 - **TextureLoader** ： 单例模式，快速加载纹理
 
@@ -121,9 +121,9 @@ int main(int argc, char** argv) {
     xmake
     ```
 
-- 运行
+- 运行实例
     ```
-    xmake run main
+    xmake run example
     ```
 
 - 生成complie_commands.json文件用于clangd提示生成
