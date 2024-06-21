@@ -19,6 +19,9 @@
 namespace gl_hwk {
 
 class PrimitiveBuilderImpl;
+/**
+ * @brief 图元构建者，用于构建基本几何体
+ */
 class PrimitiveBuilder {
  public:
   explicit PrimitiveBuilder();

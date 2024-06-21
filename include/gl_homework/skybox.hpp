@@ -17,6 +17,9 @@
 namespace gl_hwk {
 
 class SkyBoxImpl;
+/**
+ * @brief 天空盒
+ */
 class SkyBox {
  public:
   explicit SkyBox(const std::vector<std::string> &cubemap_path, std::shared_ptr<Shader> shader,
@@ -27,6 +30,7 @@ class SkyBox {
   auto setShader(std::shared_ptr<Shader> shader) -> void;
 
  private:
+  // 隐藏实现
   unique_impl<SkyBoxImpl> impl_;
 };
 }  // namespace gl_hwk

@@ -17,6 +17,9 @@ namespace gl_hwk {
 enum CameraMovement { FORWARD, BACKWARD, LEFT, RIGHT };
 
 class CameraImpl;
+/**
+ * @brief 摄像机类，用于控制观察视角
+ */
 class Camera {
  public:
   Camera(const glm::vec3 &position, float focal_length, uint32_t width, uint32_t height,

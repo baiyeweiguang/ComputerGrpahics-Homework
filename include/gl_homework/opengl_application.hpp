@@ -28,7 +28,7 @@ struct WindowOptions {
 };
 
 class OpenGLApplicationImpl;
-// Singleton
+// 单例模式 
 class OpenGLApplication {
  public:
   static auto instance() -> OpenGLApplication&;
@@ -46,13 +46,13 @@ class OpenGLApplication {
  private:
   OpenGLApplication();
 
-  // Disable copy and move
+  // 禁止拷贝和移动 
   OpenGLApplication(const OpenGLApplication&) = delete;
   OpenGLApplication& operator=(const OpenGLApplication&) = delete;
   OpenGLApplication(OpenGLApplication&&) = delete;
   OpenGLApplication& operator=(OpenGLApplication&&) = delete;
 
-  // Pimpl idiom
+  // 隐藏实现 
   unique_impl<OpenGLApplicationImpl> impl_;
 };
 

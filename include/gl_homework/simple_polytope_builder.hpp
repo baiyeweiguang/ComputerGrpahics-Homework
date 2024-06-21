@@ -19,6 +19,9 @@
 
 namespace gl_hwk {
 class SimplePolytopeBuilderImpl;
+/**
+ * @brief 多面体构建者，用于构建简单的多面体(立方体、四面体、平面)
+ */
 class SimplePolytopeBuilder {
  public:
   explicit SimplePolytopeBuilder(std::shared_ptr<PrimitiveBuilder> primitive_builder);

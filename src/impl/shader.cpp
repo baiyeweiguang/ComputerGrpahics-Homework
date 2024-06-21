@@ -6,32 +6,28 @@
 namespace gl_hwk {
 class ShaderImpl {
  public:
-  ShaderImpl();
-  auto checkCompileErrors(GLuint shader, const std::string &type) const -> void;
-};
+  ShaderImpl() {}
+  auto checkCompileErrors(GLuint shader, const std::string &type) const -> void {
+    constexpr int LOG_SIZE = 1024;
 
-ShaderImpl::ShaderImpl() {}
+    int success;
+    char info_log[LOG_SIZE];
 
-auto ShaderImpl::checkCompileErrors(GLuint shader, const std::string &type) const -> void {
-  constexpr int LOG_SIZE = 1024;
-
-  int success;
-  char info_log[LOG_SIZE];
-
-  if (type != "PROGRAM") {
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-      glGetShaderInfoLog(shader, LOG_SIZE, nullptr, info_log);
-      fmt::print("ERROR::SHADER_COMPILATION_ERROR of type: {}\n{}\n", type, info_log);
-    }
-  } else {
-    glGetProgramiv(shader, GL_LINK_STATUS, &success);
-    if (!success) {
-      glGetProgramInfoLog(shader, 1024, nullptr, info_log);
-      fmt::print("ERROR::PROGRAM_LINKING_ERROR of type: {}\n{}\n", type, info_log);
+    if (type != "PROGRAM") {
+      glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+      if (!success) {
+        glGetShaderInfoLog(shader, LOG_SIZE, nullptr, info_log);
+        fmt::print("ERROR::SHADER_COMPILATION_ERROR of type: {}\n{}\n", type, info_log);
+      }
+    } else {
+      glGetProgramiv(shader, GL_LINK_STATUS, &success);
+      if (!success) {
+        glGetProgramInfoLog(shader, 1024, nullptr, info_log);
+        fmt::print("ERROR::PROGRAM_LINKING_ERROR of type: {}\n{}\n", type, info_log);
+      }
     }
   }
-}
+};
 
 Shader::Shader(const std::string &vertex_path, const std::string &fragment_path) {
   impl_ = make_unique_impl<ShaderImpl>();

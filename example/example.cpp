@@ -22,7 +22,7 @@
 #include "gl_homework/texture_loader.hpp"
 // clang-format on
 
-int main(int argc, char** argv) {
+auto main(int argc, char** argv) -> int {
   // 初始化OpenGL
   gl_hwk::WindowOptions options;
   options.name = argv[0];
@@ -242,12 +242,11 @@ int main(int argc, char** argv) {
     other_data.push_back(std::move(temp));
   }
 
-
   // 渲染主程序
   auto render_func = [&]() -> void {
     glm::mat4 view = camera->getViewMatrix();
     glm::mat4 projection = camera->getProjectionMatrix();
-    auto model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
 
     // 绘制天空盒
     skybox->draw();
@@ -311,7 +310,6 @@ int main(int argc, char** argv) {
             {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}});
   };
 
-
   // 键盘回调
   auto keyboardCallback = [&](unsigned char key, int x, int y) {
     if (key == 27) {
@@ -335,7 +333,6 @@ int main(int argc, char** argv) {
     }
   };
 
-
   // 鼠标回调
   int last_x = 0;
   int last_y = 0;
@@ -356,7 +353,6 @@ int main(int argc, char** argv) {
     last_x = x;
     last_y = y;
   };
-
 
   // 注册回调
   gl_hwk::OpenGLApplication::instance().onDisplay(std::move(render_func));

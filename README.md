@@ -19,7 +19,7 @@ gl_homework库对OpenGL（基于glut和glew）进行二次封装，实现了一�
 
 通过这个库，可以按照下面方式快速构建OpenGL应用：
 ```cpp
-int main(int argc, char** argv) {
+auto main(int argc, char** argv) -> int {
   // 初始化
   gl_hwk::WindowOptions options;
   options.name = argv[0];

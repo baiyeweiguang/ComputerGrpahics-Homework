@@ -7,6 +7,10 @@
 
 namespace gl_hwk {
 // 为Pimpl模式实现RAII
+/**
+ * @brief 类unique_ptr
+ * @tparam T 类型
+ */
 template <typename T>
 class unique_impl {
  public:
@@ -36,6 +40,13 @@ class unique_impl {
   T* m_p_;
 };
 
+/**
+ * @brief 创建unique_impl对象
+ * @tparam T 类型
+ * @tparam Args 参数包
+ * @param args 参数包
+ * @return unique_impl对象
+ */
 template <typename T, typename... Args>
 auto make_unique_impl(Args&&... args) -> unique_impl<T> {
   return unique_impl<T>(new T(std::forward<Args>(args)...));

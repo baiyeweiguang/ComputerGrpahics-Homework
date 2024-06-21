@@ -17,7 +17,7 @@
 
 namespace gl_hwk {
 class TextureLoaderImpl;
-// Singleton
+// 单例模式 
 class TextureLoader {
  public:
   static auto instance() -> TextureLoader&;
@@ -32,7 +32,7 @@ class TextureLoader {
 
  private:
   TextureLoader();
-  // disable copy and move
+  // 禁止拷贝和移动 
   TextureLoader(const TextureLoader&) = delete;
   TextureLoader& operator=(const TextureLoader&) = delete;
   TextureLoader(TextureLoader&&) = delete;

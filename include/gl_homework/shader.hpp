@@ -19,10 +19,14 @@
 namespace gl_hwk {
 
 class ShaderImpl;
+/**
+ * @brief 着色器，读取、编译并连接GLSL程序
+ */
 class Shader {
  public:
   Shader(const std::string &vertex_path, const std::string &fragment_path);
   auto start() -> void;
+
   auto setBool(const std::string &name, bool value) const -> void;
   auto setInt(const std::string &name, int value) const -> void;
   auto setFloat(const std::string &name, float value) const -> void;
@@ -37,9 +41,11 @@ class Shader {
   auto setMat4(const std::string &name, const glm::mat4 &mat) const -> void;
 
  public:
+  // 着色器程序ID
   GLuint ID;
 
  private:
+  // 隐藏实现
   unique_impl<ShaderImpl> impl_;
 };
 }  // namespace gl_hwk
