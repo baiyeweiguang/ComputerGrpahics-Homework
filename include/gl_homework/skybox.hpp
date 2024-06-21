@@ -19,8 +19,7 @@ namespace gl_hwk {
 class SkyBoxImpl;
 class SkyBox {
  public:
-  explicit SkyBox(const std::vector<std::string> &cubemap_path,
-                  std::shared_ptr<Shader> shader,
+  explicit SkyBox(const std::vector<std::string> &cubemap_path, std::shared_ptr<Shader> shader,
                   std::shared_ptr<Camera> camera);
 
   auto draw() -> void;
@@ -28,7 +27,7 @@ class SkyBox {
   auto setShader(std::shared_ptr<Shader> shader) -> void;
 
  private:
-  UniqueImpl<SkyBoxImpl> impl_;
+  unique_impl<SkyBoxImpl> impl_;
 };
 }  // namespace gl_hwk
 #endif

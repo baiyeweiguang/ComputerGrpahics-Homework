@@ -3,6 +3,7 @@
 // clang-format off
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <fmt/core.h>
 
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/fwd.hpp>
@@ -14,9 +15,8 @@ namespace gl_hwk {
 class CameraImpl {
  public:
   CameraImpl() = default;
-  CameraImpl(const glm::vec3 &position, float focal_length, uint32_t width,
-             uint32_t height, const glm::vec3 &world_up, float yaw,
-             float pitch);
+  CameraImpl(const glm::vec3 &position, float focal_length, uint32_t width, uint32_t height, const glm::vec3 &world_up,
+             float yaw, float pitch);
   auto intrinsicToFov(float focal, float w, float h) const -> glm::vec2;
   auto fovToIntrinsic(float fov_y, float h) const -> float;
   auto updateCameraVectors() -> void;
@@ -37,8 +37,7 @@ class CameraImpl {
   glm::vec3 right_;
 };
 
-CameraImpl::CameraImpl(const glm::vec3 &position, float focal_length,
-                       uint32_t width, uint32_t height,
+CameraImpl::CameraImpl(const glm::vec3 &position, float focal_length, uint32_t width, uint32_t height,
                        const glm::vec3 &world_up, float yaw, float pitch)
     : position_(position),
       focal_length_(focal_length),
@@ -53,50 +52,42 @@ CameraImpl::CameraImpl(const glm::vec3 &position, float focal_length,
   fov_y_ = fov.y;
 }
 
-auto CameraImpl::intrinsicToFov(float focal, float w, float h) const
-    -> glm::vec2 {
+auto CameraImpl::intrinsicToFov(float focal, float w, float h) const -> glm::vec2 {
   float fov_x = 2 * atan(w / (2 * focal));
   float fov_y = 2 * atan(h / (2 * focal));
   return glm::vec2(fov_x, fov_y);
 }
 
-auto CameraImpl::fovToIntrinsic(float fov_y, float h) const -> float {
-  return h / (2 * tan(fov_y / 2));
-}
+auto CameraImpl::fovToIntrinsic(float fov_y, float h) const -> float { return h / (2 * tan(fov_y / 2)); }
 
 auto CameraImpl::updateCameraVectors() -> void {
   glm::vec3 front;
-  front.x = cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));
+  front.x = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
   front.y = sin(glm::radians(pitch_));
-  front.z = sin(glm::radians(yaw_)) * cos(glm::radians(pitch_));
+  front.z = cos(glm::radians(yaw_)) * cos(glm::radians(pitch_));
   front_ = glm::normalize(front);
 
   right_ = glm::normalize(glm::cross(front_, world_up_));
   up_ = glm::normalize(glm::cross(right_, front_));
 }
 
-Camera::Camera(const glm::vec3 &position, float focal_length, uint32_t width,
-               uint32_t height, const glm::vec3 &world_up, float yaw,
-               float pitch) {
-  impl_ = make_unique_impl<CameraImpl>(position, focal_length, width, height,
-                                       world_up, yaw, pitch);
+Camera::Camera(const glm::vec3 &position, float focal_length, uint32_t width, uint32_t height,
+               const glm::vec3 &world_up, float yaw, float pitch) {
+  impl_ = make_unique_impl<CameraImpl>(position, focal_length, width, height, world_up, yaw, pitch);
 }
 
 auto Camera::getProjectionMatrix() -> glm::mat4 {
-  return glm::perspective(impl_->fov_y_, impl_->width_ / impl_->height_, 0.1f,
-                          100.0f);
+  return glm::perspective(impl_->fov_y_, impl_->width_ / impl_->height_, 0.1f, 100.0f);
 }
 
 auto Camera::getViewMatrix() -> glm::mat4 {
-  return glm::lookAt(impl_->position_, impl_->position_ + impl_->front_,
-                     impl_->up_);
+  return glm::lookAt(impl_->position_, impl_->position_ + impl_->front_, impl_->up_);
 }
 
 auto Camera::setZoom(float zoom) -> void {
   zoom = glm::radians(zoom);
   impl_->focal_length_ = impl_->fovToIntrinsic(zoom, impl_->height_);
-  glm::vec2 fov = impl_->intrinsicToFov(impl_->focal_length_, impl_->width_,
-                                        impl_->height_);
+  glm::vec2 fov = impl_->intrinsicToFov(impl_->focal_length_, impl_->width_, impl_->height_);
   impl_->fov_x_ = fov.x;
   impl_->fov_y_ = fov.y;
 }

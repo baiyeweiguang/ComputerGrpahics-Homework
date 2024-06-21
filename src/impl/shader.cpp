@@ -12,8 +12,7 @@ class ShaderImpl {
 
 ShaderImpl::ShaderImpl() {}
 
-auto ShaderImpl::checkCompileErrors(GLuint shader,
-                                    const std::string &type) const -> void {
+auto ShaderImpl::checkCompileErrors(GLuint shader, const std::string &type) const -> void {
   constexpr int LOG_SIZE = 1024;
 
   int success;
@@ -23,21 +22,18 @@ auto ShaderImpl::checkCompileErrors(GLuint shader,
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if (!success) {
       glGetShaderInfoLog(shader, LOG_SIZE, nullptr, info_log);
-      fmt::print("ERROR::SHADER_COMPILATION_ERROR of type: {}\n{}\n", type,
-                 info_log);
+      fmt::print("ERROR::SHADER_COMPILATION_ERROR of type: {}\n{}\n", type, info_log);
     }
   } else {
     glGetProgramiv(shader, GL_LINK_STATUS, &success);
     if (!success) {
       glGetProgramInfoLog(shader, 1024, nullptr, info_log);
-      fmt::print("ERROR::PROGRAM_LINKING_ERROR of type: {}\n{}\n", type,
-                 info_log);
+      fmt::print("ERROR::PROGRAM_LINKING_ERROR of type: {}\n{}\n", type, info_log);
     }
   }
 }
 
-Shader::Shader(const std::string &vertex_path,
-               const std::string &fragment_path) {
+Shader::Shader(const std::string &vertex_path, const std::string &fragment_path) {
   impl_ = make_unique_impl<ShaderImpl>();
 
   // 1. retrieve the vertex/fragment source code from filePath
@@ -63,8 +59,7 @@ Shader::Shader(const std::string &vertex_path,
     vertex_code = v_shader_stream.str();
     fragment_code = f_shader_stream.str();
   } catch (std::ifstream::failure e) {
-    fmt::print("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ, e.what() : {}\n",
-               e.what());
+    fmt::print("ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ, e.what() : {}\n", e.what());
   }
 
   const char *v_shader_code = vertex_code.c_str();
@@ -111,8 +106,7 @@ auto Shader::setFloat(const std::string &name, float value) const -> void {
   glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 }
 
-auto Shader::setVec2(const std::string &name, const glm::vec2 &value) const
-    -> void {
+auto Shader::setVec2(const std::string &name, const glm::vec2 &value) const -> void {
   glUniform2fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 }
 
@@ -120,42 +114,32 @@ auto Shader::setVec2(const std::string &name, float x, float y) const -> void {
   glUniform2f(glGetUniformLocation(ID, name.c_str()), x, y);
 }
 
-auto Shader::setVec3(const std::string &name, const glm::vec3 &value) const
-    -> void {
+auto Shader::setVec3(const std::string &name, const glm::vec3 &value) const -> void {
   glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 }
 
-auto Shader::setVec3(const std::string &name, float x, float y, float z) const
-    -> void {
+auto Shader::setVec3(const std::string &name, float x, float y, float z) const -> void {
   glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
 }
 
-auto Shader::setVec4(const std::string &name, const glm::vec4 &value) const
-    -> void {
+auto Shader::setVec4(const std::string &name, const glm::vec4 &value) const -> void {
   glUniform4fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
 }
 
-auto Shader::setVec4(const std::string &name, float x, float y, float z,
-                     float w) const -> void {
+auto Shader::setVec4(const std::string &name, float x, float y, float z, float w) const -> void {
   glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
 }
 
-auto Shader::setMat2(const std::string &name, const glm::mat2 &mat) const
-    -> void {
-  glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE,
-                     &mat[0][0]);
+auto Shader::setMat2(const std::string &name, const glm::mat2 &mat) const -> void {
+  glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
-auto Shader::setMat3(const std::string &name, const glm::mat3 &mat) const
-    -> void {
-  glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE,
-                     &mat[0][0]);
+auto Shader::setMat3(const std::string &name, const glm::mat3 &mat) const -> void {
+  glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
-auto Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
-    -> void {
-  glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE,
-                     &mat[0][0]);
+auto Shader::setMat4(const std::string &name, const glm::mat4 &mat) const -> void {
+  glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
 
 }  // namespace gl_hwk

@@ -1,7 +1,5 @@
 # gl_homework
 
-> 突发奇想用库开发的形式去做课程作业
-
 ## 项目简介
 
 **作者**: 邹承甫
@@ -56,7 +54,7 @@ int main(int argc, char** argv) {
                                                  600.f, 1024, 1024);
 
   // Builder
-  auto builder = std::make_shared<gl_hwk::PrimitiveBuilder>(shader);
+  auto builder = std::make_shared<gl_hwk::PrimitiveBuilder>();
 
   // 渲染主程序
   auto render_func = [&]() -> void {
@@ -65,11 +63,12 @@ int main(int argc, char** argv) {
     // 坐标系统
     glm::mat4 projection = camera->getProjectionMatrix();
     glm::mat4 view = camera->getViewMatrix();
+    glm::mat4 model = glm::mat4(1.0f);
     shader->setMat4("projection", projection);
     shader->setMat4("view", view);
+    shader->setMat4("model", model);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    builder->buildTriangles(fmt::format("cube_{}", 0), vertices, {}, colors, model);
+    builder->buildTriangles(fmt::format("cube_{}", 0), vertices, {}, colors);
   };
 
   // 键盘回调
@@ -130,3 +129,73 @@ int main(int argc, char** argv) {
     ```
     xmake project -k complie_commands
     ```
+
+## 中南大学人工智能21级计算机图形学作业
+
+- ~~作业1 完成Opengl再windows平台上的配置（选做）~~
+  > 我选择Linux
+  -  安装vs.net 
+  -  配置OpenGl环境
+  -  能够正确运行上传的工程。
+
+- 作业2 绘制基本图元（必做）
+  > 调用PrimitiveBuilder即可
+  - 完成点，线，多线段，循环线，三角形，三角形条带的绘制
+
+- 作业3 撰写GLSL（选做）
+  > shader/里实现了6种
+  1. 根据提供的源码编写shader，或者自己根据自己的编译环境来编辑shander
+  2. 实现至少5种fragment shaders，以显示不同的效果，
+  3. 绘制的几何体形状不做要求，甚至可以是一个三角形
+
+- 作业4 实现空间转换（必做）
+  > Camera类
+  1. 试验图元平移、旋转，缩放（包括按固定点缩放、旋转）
+  2. 实现图元的组合操作
+  3. 实现图元的错切和翻转
+  - 以上均在着色器中用齐次坐标实现。
+
+- 作业5 DrawElements绘制（选做）
+  > PrimitiveBuilder同时支持EBO绘制
+  1. 熟悉drawelements函数，了解ebo的数据传递过程，
+  2. 测试平移，旋转，缩放的效果。修改vert文件中的三个旋转矩阵
+  3. 编写一般三维旋转的旋转矩阵，进行测试
+  4. 使用drawelements来绘制三角形的棱
+
+- 作业6 四面体绘制（必做）
+  > example里那个绕圈圈的彩色四面体，取消注释293行的注释就是正投影  
+  1. 尝试使用条带形式绘制四面体，观察绘制效果
+  2. 开启/关闭背面剪裁和深度测试，观察效果的区别
+  3. 使用图元重启动的方式绘制立方体
+  5. 完成正投影的coding，比较正投影和透视投影的区别。
+
+- 作业7 融合程序设计（选做
+  > 取消example277行的注释
+  1. 基于blend工程，或者是chapter-03-blending工程来设计融合
+  2. 尽量对比多种融混glblendfunc的参数
+  3. 尝试使用不同的方程式，通过设置，来完成不同的融合。
+- 作业8 纹理绘制（必做）
+  > 砖块和国旗
+  1. 根据上传的工程进行修改
+  2. 绘制一面中国国旗
+  3. 使用repeat 和clamp参数来进行多面绘制
+  4. 对比nearest 和 linear 过滤方式。
+  5. 实现 mip图层
+  6. 实现各向异性过滤方式
+  7. 对比各种过滤的组合效果
+
+- 作业9 天空盒绘制（选做）
+  > 蓝天白云
+  1. 根据上传的程序进行修改
+  2. 完成一个3维贴图
+  3. 实现skybox的渲染
+
+
+- 作业10（必做）
+  > 按1和2切换
+  1. 根据课程内容，实现Phong光照
+  2. 根据课程内容，实现Gouraud光照
+  3. 绘制一个旋转的立方体，实现上述两种照明，可以通过按键'a'和‘s’来实现两种照明的切换
+
+## example运行截图
+<img src="assets/screenshot.png" />

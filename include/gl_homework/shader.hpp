@@ -29,11 +29,9 @@ class Shader {
   auto setVec2(const std::string &name, const glm::vec2 &value) const -> void;
   auto setVec2(const std::string &name, float x, float y) const -> void;
   auto setVec3(const std::string &name, const glm::vec3 &value) const -> void;
-  auto setVec3(const std::string &name, float x, float y, float z) const
-      -> void;
+  auto setVec3(const std::string &name, float x, float y, float z) const -> void;
   auto setVec4(const std::string &name, const glm::vec4 &value) const -> void;
-  auto setVec4(const std::string &name, float x, float y, float z,
-               float w) const -> void;
+  auto setVec4(const std::string &name, float x, float y, float z, float w) const -> void;
   auto setMat2(const std::string &name, const glm::mat2 &mat) const -> void;
   auto setMat3(const std::string &name, const glm::mat3 &mat) const -> void;
   auto setMat4(const std::string &name, const glm::mat4 &mat) const -> void;
@@ -42,7 +40,7 @@ class Shader {
   GLuint ID;
 
  private:
-  UniqueImpl<ShaderImpl> impl_;
+  unique_impl<ShaderImpl> impl_;
 };
 }  // namespace gl_hwk
 

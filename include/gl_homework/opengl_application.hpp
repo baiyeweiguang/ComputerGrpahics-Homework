@@ -33,17 +33,14 @@ class OpenGLApplication {
  public:
   static auto instance() -> OpenGLApplication&;
 
-  auto init(int argc, char** argv,
-            const WindowOptions& options = WindowOptions()) -> void;
+  auto init(int argc, char** argv, const WindowOptions& options = WindowOptions()) -> void;
   auto run() -> void;
 
   auto setDepthTest(bool enable) -> void;
 
-  auto onKeyboardPress(
-      std::function<void(unsigned char key, int x, int y)>&& func) -> void;
+  auto onKeyboardPress(std::function<void(unsigned char key, int x, int y)>&& func) -> void;
   auto onDisplay(std::function<void()>&& func) -> void;
-  auto onMouseButtonPress(
-      std::function<void(int button, int state, int x, int y)>&& func) -> void;
+  auto onMouseButtonPress(std::function<void(int button, int state, int x, int y)>&& func) -> void;
   auto onMouseMove(std::function<void(int x, int y)>&& func) -> void;
 
  private:
@@ -56,7 +53,7 @@ class OpenGLApplication {
   OpenGLApplication& operator=(OpenGLApplication&&) = delete;
 
   // Pimpl idiom
-  UniqueImpl<OpenGLApplicationImpl> impl_;
+  unique_impl<OpenGLApplicationImpl> impl_;
 };
 
 }  // namespace gl_hwk

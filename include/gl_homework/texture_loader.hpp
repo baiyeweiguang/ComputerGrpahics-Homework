@@ -22,9 +22,11 @@ class TextureLoader {
  public:
   static auto instance() -> TextureLoader&;
 
-  auto loadTexture(const std::string& texture_path) -> GLuint;
+  auto loadTexture(const std::string& texture_path, bool flip=false) -> GLuint;
 
   auto loadBoxMap(const std::vector<std::string>& texture_paths) -> GLuint;
+
+  auto setTextureAlpha(GLuint texture_id, float alpha) -> void;
 
   auto activeTexture(GLuint texture_id, int idx) -> void;
 
@@ -36,7 +38,7 @@ class TextureLoader {
   TextureLoader(TextureLoader&&) = delete;
   TextureLoader& operator=(TextureLoader&&) = delete;
 
-  UniqueImpl<TextureLoaderImpl> impl_;
+  unique_impl<TextureLoaderImpl> impl_;
 };
 
 }  // namespace gl_hwk

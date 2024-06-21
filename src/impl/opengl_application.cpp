@@ -47,24 +47,19 @@ class OpenGLApplicationImpl {
   GLuint window_;
   static WindowOptions options_;
   static std::function<void()> render_callback_;
-  static std::function<void(unsigned char key, int x, int y)>
-      keyboard_callback_;
-  static std::function<void(int button, int state, int x, int y)>
-      mouse_button_callback_;
+  static std::function<void(unsigned char key, int x, int y)> keyboard_callback_;
+  static std::function<void(int button, int state, int x, int y)> mouse_button_callback_;
   static std::function<void(int x, int y)> mouse_move_callback_;
 };
 
-OpenGLApplication::OpenGLApplication() {
-  impl_ = make_unique_impl<OpenGLApplicationImpl>();
-}
+OpenGLApplication::OpenGLApplication() { impl_ = make_unique_impl<OpenGLApplicationImpl>(); }
 
 auto OpenGLApplication::instance() -> OpenGLApplication& {
   static OpenGLApplication instance;
   return instance;
 }
 
-auto OpenGLApplication::init(int argc, char** argv,
-                             const WindowOptions& options) -> void {
+auto OpenGLApplication::init(int argc, char** argv, const WindowOptions& options) -> void {
   impl_->options_ = options;
   if (!impl_->init_) {
     glutInit(&argc, argv);
@@ -78,6 +73,9 @@ auto OpenGLApplication::init(int argc, char** argv,
     }
     // 默认开启深度测试
     glEnable(GL_DEPTH_TEST);
+    // 默认开启blend
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   fmt::print("OpenGL Application Init!\n");
   impl_->init_ = true;
@@ -104,32 +102,25 @@ auto OpenGLApplication::setDepthTest(bool enable) -> void {
   }
 }
 
-auto OpenGLApplication::onKeyboardPress(
-    std::function<void(unsigned char key, int x, int y)>&& func) -> void {
+auto OpenGLApplication::onKeyboardPress(std::function<void(unsigned char key, int x, int y)>&& func) -> void {
   impl_->keyboard_callback_ = std::move(func);
 }
 
-auto OpenGLApplication::onDisplay(std::function<void()>&& func) -> void {
-  impl_->render_callback_ = std::move(func);
-}
+auto OpenGLApplication::onDisplay(std::function<void()>&& func) -> void { impl_->render_callback_ = std::move(func); }
 
-auto OpenGLApplication::onMouseButtonPress(
-    std::function<void(int button, int state, int x, int y)>&& func) -> void {
+auto OpenGLApplication::onMouseButtonPress(std::function<void(int button, int state, int x, int y)>&& func) -> void {
   impl_->mouse_button_callback_ = std::move(func);
 }
 
-auto OpenGLApplication::onMouseMove(std::function<void(int x, int y)>&& func)
-    -> void {
+auto OpenGLApplication::onMouseMove(std::function<void(int x, int y)>&& func) -> void {
   impl_->mouse_move_callback_ = std::move(func);
 }
 
 // 定义静态成员变量
 WindowOptions OpenGLApplicationImpl::options_;
 std::function<void()> OpenGLApplicationImpl::render_callback_;
-std::function<void(unsigned char key, int x, int y)>
-    OpenGLApplicationImpl::keyboard_callback_;
-std::function<void(int button, int state, int x, int y)>
-    OpenGLApplicationImpl::mouse_button_callback_;
+std::function<void(unsigned char key, int x, int y)> OpenGLApplicationImpl::keyboard_callback_;
+std::function<void(int button, int state, int x, int y)> OpenGLApplicationImpl::mouse_button_callback_;
 std::function<void(int x, int y)> OpenGLApplicationImpl::mouse_move_callback_;
 
 }  // namespace gl_hwk

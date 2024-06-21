@@ -19,11 +19,12 @@ enum CameraMovement { FORWARD, BACKWARD, LEFT, RIGHT };
 class CameraImpl;
 class Camera {
  public:
-  Camera(const glm::vec3 &position, float focal_length, uint32_t width,
-         uint32_t height,
-         const glm::vec3 &world_up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = 0,
-         float pitch = 0);
+  Camera(const glm::vec3 &position, float focal_length, uint32_t width, uint32_t height,
+         const glm::vec3 &world_up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = 0, float pitch = 0);
 
+  /**
+   * @brief 获取透视投影矩阵
+   */
   auto getProjectionMatrix() -> glm::mat4;
   auto getViewMatrix() -> glm::mat4;
   auto setZoom(float zoom) -> void;
@@ -42,7 +43,7 @@ class Camera {
 
  private:
   // 隐藏实现
-  UniqueImpl<CameraImpl> impl_;
+  unique_impl<CameraImpl> impl_;
 };
 
 }  // namespace gl_hwk
