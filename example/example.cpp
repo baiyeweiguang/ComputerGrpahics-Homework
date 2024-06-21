@@ -3,8 +3,6 @@
 // clang-format off
 // std
 #include <functional>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/fwd.hpp>
 #include <memory>
 // OpenGL
 #include <GL/glew.h>
@@ -58,20 +56,42 @@ int main(int argc, char** argv) {
       "shader/"
       "pure_color.frag.GLSL");
 
-  auto builder = std::make_shared<gl_hwk::PrimitiveBuilder>();
-
+  // 默认使用phong光照
   std::shared_ptr<gl_hwk::Shader> objects_shader = phong_shader;
 
+  // 图元builder
+  auto builder = std::make_shared<gl_hwk::PrimitiveBuilder>();
+  // 多面体builder
+  auto polytope_builder = std::make_shared<gl_hwk::SimplePolytopeBuilder>(builder);
+
+  // 摄像机
+  // Camera
+  auto camera = std::make_shared<gl_hwk::Camera>(glm::vec3(0.0f, 0.0f, -3.0f), 600.f, 1024, 1024);
+
   // 纹理
+  // 砖块纹理
   GLuint wall_texture = gl_hwk::TextureLoader::instance().loadTexture("texture/wall.jpg");
+  // 国旗纹理
   GLuint flag_texture = gl_hwk::TextureLoader::instance().loadTexture("texture/m_gq.png", true);
+  // 激活纹理单元
   phong_shader->start();
   phong_shader->setInt("texture1", 0);
   gouraud_shader->start();
   gouraud_shader->setInt("texture1", 0);
 
-  // 顶点数据
+  // 天空盒
+  auto skybox_paths =
+      std::vector<std::string>{"texture/skybox/right.jpg",  "texture/skybox/left.jpg",  "texture/skybox/top.jpg",
+                               "texture/skybox/bottom.jpg", "texture/skybox/front.jpg", "texture/skybox/back.jpg"};
+  auto skybox_shader = std::make_shared<gl_hwk::Shader>(
+      "shader/"
+      "skybox.vert.GLSL",
+      "shader/"
+      "skybox.frag.GLSL");
+  auto skybox = std::make_shared<gl_hwk::SkyBox>(skybox_paths, skybox_shader, camera);
+
   // clang-format off
+  // 立方体的顶点数据
   auto vertices = std::vector<glm::vec3>{
     // 背面
     {-0.5f, -0.5f, -0.5f}, // 左下
@@ -117,7 +137,7 @@ int main(int argc, char** argv) {
     {-0.5f,  0.5f, -0.5f},
   };
 
-  // 会以三个为一组作为顶点着色器的输入，如果不为3的整数倍，多出来的1/2个数据会被抛弃
+  // 立方体的纹理坐标（z轴没用）
   auto texture_coord= std::vector<std::vector<float>>{     
     { 0.0f, 0.0f, 0.0f}, // 左下
     { 1.0f, 0.0f, 0.0f}, // 右下
@@ -161,6 +181,7 @@ int main(int argc, char** argv) {
     { 0.0f, 0.0f, 0.0f},
     { 0.0f, 1.0f, 0.0f}};
 
+  // 立方体每个顶点对应的法向量，用于光照计算
   auto normals = std::vector<std::vector<float>>{
     { 0.0f,  0.0f, -1.0f},
     { 0.0f,  0.0f, -1.0f},
@@ -199,7 +220,7 @@ int main(int argc, char** argv) {
     { 0.0f,  1.0f,  0.0f},
     { 0.0f,  1.0f,  0.0f}};
 
-
+  // 十个立方体在空间中的位置
   auto cube_positions = std::vector<glm::vec3>{
       glm::vec3(0.0f, 0.0f, 0.0f),    glm::vec3(2.0f, 5.0f, -15.0f),
       glm::vec3(-1.5f, -2.2f, -2.5f), glm::vec3(-3.8f, -2.0f, -12.3f),
@@ -207,13 +228,12 @@ int main(int argc, char** argv) {
       glm::vec3(1.3f, -2.0f, -2.5f),  glm::vec3(1.5f, 2.0f, -2.5f),
       glm::vec3(1.5f, 0.2f, -1.5f),   glm::vec3(-1.3f, 1.0f, -1.5f)};
 
+  // 光源位置
   auto light_positions = glm::vec3{0, 5.0f, 0.0};
   // clang-format on
 
-  // 多面体builder
-  auto polytope_builder = std::make_shared<gl_hwk::SimplePolytopeBuilder>(builder);
-
-  // 传入顶点着色器的数据
+  // 准备传入顶点着色器的数据
+  // 每个顶点传入九个float，对应3个vec3，分别是顶点坐标，纹理坐标，法向量
   std::vector<std::vector<float>> other_data;
   for (int i = 0; i < vertices.size(); i++) {
     std::vector<float> temp;
@@ -222,18 +242,6 @@ int main(int argc, char** argv) {
     other_data.push_back(std::move(temp));
   }
 
-  // Camera
-  auto camera = std::make_shared<gl_hwk::Camera>(glm::vec3(0.0f, 0.0f, -3.0f), 600.f, 1024, 1024);
-  // 天空盒
-  auto skybox_paths =
-      std::vector<std::string>{"texture/skybox/right.jpg",  "texture/skybox/left.jpg",  "texture/skybox/top.jpg",
-                               "texture/skybox/bottom.jpg", "texture/skybox/front.jpg", "texture/skybox/back.jpg"};
-  auto skybox_shader = std::make_shared<gl_hwk::Shader>(
-      "shader/"
-      "skybox.vert.GLSL",
-      "shader/"
-      "skybox.frag.GLSL");
-  auto skybox = std::make_shared<gl_hwk::SkyBox>(skybox_paths, skybox_shader, camera);
 
   // 渲染主程序
   auto render_func = [&]() -> void {
@@ -303,6 +311,7 @@ int main(int argc, char** argv) {
             {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f, 1.0f}});
   };
 
+
   // 键盘回调
   auto keyboardCallback = [&](unsigned char key, int x, int y) {
     if (key == 27) {
@@ -326,6 +335,7 @@ int main(int argc, char** argv) {
     }
   };
 
+
   // 鼠标回调
   int last_x = 0;
   int last_y = 0;
@@ -346,6 +356,7 @@ int main(int argc, char** argv) {
     last_x = x;
     last_y = y;
   };
+
 
   // 注册回调
   gl_hwk::OpenGLApplication::instance().onDisplay(std::move(render_func));
